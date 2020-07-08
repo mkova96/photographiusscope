@@ -1,0 +1,23 @@
+<h1 class="naslov">New message</h1>
+
+<form autocomplete="off" novalidate [formGroup]="form" class="form-center">
+    <fieldset>
+        <div class="form-field" >
+            <label>Receiver:</label>
+            <select id="receiverEmail" class="form-control" name="receiverEmail" formControlName="receiverEmail" required >
+                <option *ngFor="let user of users$ | async" [ngValue]="user.email">
+                    {{ user.firstName }} {{user.lastName}}
+                </option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label>Content:</label>
+            <textarea type="text" class="form-control" name="content" formControlName="content" required maxlength="300"></textarea>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button class="btn btn-dark" [disabled]="form.invalid" (click)="sendMessage()"> Send</button>
+    </div>
+
+</form>

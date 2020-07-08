@@ -1,0 +1,60 @@
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success</strong> {{successMessage}} 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error</strong> {{errorMessage}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<!---********************************************************************************************--->  
+<h1 class="naslov">New transaction</h1>
+
+<form autocomplete="on" novalidate [formGroup]="form" class="form-center">
+    <fieldset>
+        <div class="form-field">
+            <label>Amount:</label>
+            <input type="number" class="form-control" name="amount" formControlName="amount" required>
+        </div>
+        <div class="form-field" >
+            <label>Receiver:</label>
+            <select id="receiverEmail" class="form-control" name="receiverEmail" formControlName="receiverEmail" required>
+                <option *ngFor="let user of users$ | async" [ngValue]="user.email">
+                    {{ user.firstName }}  {{ user.lastName }}
+                </option>
+            </select>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button class="btn btn-dark" [disabled]="!form.valid" (click)="sendMoney()">Send money</button>
+    </div>
+</form>
+
+<h3 class="form-center">Or just upload your file with proper data</h3>
+<form [formGroup]="myForm" class="form-center">
+    <fieldset>
+        <div class="form-group">
+            <input 
+                formControlName="file"
+                id="file" 
+                type="file" 
+                class="form-control"
+                (change)="onFileChange($event)" required>
+            <div *ngIf="f.file.touched && f.file.invalid" class="alert alert-danger">
+                <div *ngIf="f.file.errors.required">File is required.</div>
+            </div>
+        </div>
+        <div class="form-buttons">
+            <button class="btn btn-dark" (click)="uploadFile()">Upload</button>
+        </div>
+    </fieldset>
+</form>
+<div class="form-center">
+    <h4><b>File example:</b></h4>
+    <p>{{fileExample}}</p>
+</div>

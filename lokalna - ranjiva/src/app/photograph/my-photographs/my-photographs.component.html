@@ -1,0 +1,33 @@
+<h2 *ngIf="!(photos$ | async)" class="naslov">You currently don't own any photographs..</h2>
+
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(photos$ | async)" >
+
+    <div>
+        <h1 class="naslov">My Photographs</h1>
+ 
+        <table class="table lessons-list card card-strong">
+            <tbody>
+            <tr *ngFor="let p of photos$ | async" >
+                <td class="title"> 
+                    {{p.name}}, {{p.year}}
+                </td>
+                <td class="title"> 
+                   {{p.photographer.firstName}} {{p.photographer.lastName}} ({{p.photographer.age}})
+                </td>
+                <td class="title"> 
+                    {{p.price}}$
+                </td>
+                <td class="photo">
+                    <a  href="{{p.photoLink}}" target="_blank">
+                        <img src="../../../assets/photos/{{p.photoLink}}" alt="photo" height="130" width="160">
+                    </a>
+                </td>
+                <button type="button" class="btn btn-dark" *ngIf="p.userId" (click)="sellPhotograph(p.id)">
+                    Sell
+                </button>
+            </tr>
+            </tbody>
+        </table>
+    
+    
+    </div>

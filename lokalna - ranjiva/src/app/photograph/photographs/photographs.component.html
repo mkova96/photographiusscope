@@ -1,0 +1,66 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success</strong> {{successMessage}} 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error</strong> {{errorMessage}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<!---********************************************************************************************--->
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(photos$ | async)" >
+
+    <h1 class="naslov">Photographs</h1>
+      
+    <table class="table lessons-list card card-strong">
+        <tbody>
+        <tr *ngFor="let p of photos$ | async" >
+            <td class="title"> 
+                <b>{{p.name}}</b>, {{p.year}}
+            </td>
+            <td class="title"> 
+               {{p.photographer.firstName}} {{p.photographer.lastName}} ({{p.photographer.age}})
+            </td>
+            <td class="title"> 
+                {{p.price}}$
+            </td>
+            <td class="photo">
+                <a  href="{{p.photoLink}}" target="_blank">
+                    <img src="../../../assets/photos/{{p.photoLink}}" alt="photo" height="130" width="160">
+                </a>
+            </td>
+            <button type="button" class="btn btn-light" *ngIf="!p.userId" (click)="buyPhotograph(p.id)" >
+                Buy
+            </button>
+            <button type="button" class="btn btn-dark" *ngIf="p.userId === (loggedUser$ | async).id" (click)="sellPhotograph(p.id)">
+                Sell
+            </button>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h2>Bored of photographs?</h2>
+    <div class="ipsearch">
+        <h3>Ping an address to waste time</h3>
+        <form novalidate [formGroup]="form">
+            <div class="form-group">
+                <input class="form-control search" formControlName="ipaddress" type="text" placeholder="IPv4 address" required />
+            </div>
+            <div class="form-buttons">
+                <button class="btn btn-dark src-btn" [disabled]="!form.valid" (click)="ping()">Ping it!</button>
+             </div>
+        </form> 
+        <div *ngIf="response" class="ipresponse">
+            {{response.response}}
+        </div>
+    </div>
+</div>

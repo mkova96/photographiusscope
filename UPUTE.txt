@@ -1,0 +1,16 @@
+**PREDUVJETI ZA POKRETANJE APLIKACIJE
+
+1) instalirana najnovija verzija Node.js-a, dostupno na: https://nodejs.org/en/download/
+2) instalirana najnovija verzija Angulara, moguce izvodenjem naredbe: "npm install -g @angular/cli" unutar naredbenog prozora
+
+**POKRETANJE
+1.) unutar željene verzije aplikacije otvoriti naredbeni prozor te upisati naredbu: "npm install" cime ce se instalirati
+svi potrebni paketi
+2.) pokrenuti izgradnju aplikacije naredbom: "ng build"
+3.) pokrenuti aplikaciju naredbom: "npm run server"
+
+
+**DEPLOYANE VERZIJE
+
+-ranjiva -> https://photographius-scope.herokuapp.com
+-sigurna -> https://photographius-scope-2.herokuapp.com

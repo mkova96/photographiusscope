@@ -1,0 +1,41 @@
+<h1 class="naslov">Edit photograph</h1>
+<ng-container *ngFor="let error of error_messages.name" class="errors">
+    <label class="text-danger errors" *ngIf="form.get('name').hasError(error.type) && (form.get('name').dirty || form.get('name').touched)">
+        {{error.message }}
+    </label>
+</ng-container>
+
+<ng-container *ngFor="let error of error_messages.year" class="errors">
+    <label class="text-danger errors" *ngIf="form.get('year').hasError(error.type) && (form.get('year').dirty || form.get('year').touched)">
+      {{error.message }}
+    </label>
+</ng-container>
+
+<form autocomplete="off" novalidate [formGroup]="form" *ngIf="photograph" class="form-center">
+    <fieldset>
+        <div class="form-group">
+            <label>Name:</label>
+            <input class="form-control" formControlName="name" type="text" [(ngModel)]="photograph.name" required />
+        </div>
+        <div class="form-field" >
+            <label>Photographer:</label>
+            <select id="photographerId" class="form-control" name="photographerId" formControlName="photographerId" [(ngModel)]="photograph.photographerId" required>
+                <option *ngFor="let p of photographers$ | async" [ngValue]="p.id">
+                    {{ p.firstName }} {{ p.lastName }}
+                </option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label>Year:</label>
+            <input type="number" class="form-control" name="year" formControlName="year" [(ngModel)]="photograph.year" required >
+        </div>
+        <div class="form-field">
+            <label>Price:</label>
+            <input type="number" class="form-control" name="price" formControlName="price" [(ngModel)]="photograph.price" required>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button class="btn btn-dark" [disabled]="!form.valid" (click)="editPhotograph()">Save</button>
+    </div>
+</form>

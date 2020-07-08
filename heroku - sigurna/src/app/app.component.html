@@ -1,0 +1,52 @@
+<header class="l-header">
+
+  <header class="l-header">
+    <ul class="top-menu disable-link-styles">
+         <li *ngIf="isLoggedOut$ | async">
+              <a routerLink="/signup">Sign Up</a>
+          </li>
+          <li *ngIf="isLoggedOut$ | async">
+              <a routerLink="/login">Login</a>
+          </li>
+            <li *rbacAllow="['ADMIN']">
+              <a routerLink="/photographers">Photographers</a>
+            </li>
+          <li *ngIf="isLoggedIn$ | async">
+            <a routerLink="/photographs">Photographs</a>
+          </li>
+          <li *rbacAllow="['USER']">
+            <a routerLink="/myphotographs">My Photographs</a>
+          </li>
+          <li *rbacAllow="['USER']">
+            <a routerLink="/transactions">Transactions</a>
+          </li>
+          <li *rbacAllow="['ADMIN']">
+            <a routerLink="/transactions">Transactions</a>
+          </li>
+          <li *rbacAllow="['USER']">
+            <a routerLink="/messages">Messages</a>
+          </li>
+          <li *ngIf="isLoggedIn$ | async">
+            <a routerLink="/users">Users</a>
+          </li>
+          <li *ngIf="isLoggedIn$ | async">
+            <a>{{(loggedUser$ | async).email}}</a>
+          </li>
+          <li *rbacAllow="['USER']">
+            <a>{{(loggedUser$ | async).money}}$</a>
+          </li>
+          <li *ngIf="isLoggedIn$ | async" (click)="logout()">
+            <a>Logout</a>
+          </li>
+    </ul>
+  </header>
+</header>
+<main>
+  <router-outlet></router-outlet>
+
+</main>
+
+
+
+
+

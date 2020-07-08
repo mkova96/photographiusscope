@@ -1,0 +1,41 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<h1 class="naslov">Users</h1>
+
+<div style="display: none;" [innerHtml]="xss">x</div>
+
+<form [formGroup]="form" class="form-center user_search"> 
+    <input type="text" placeholder="Search.." formControlName="search" required class="form-control">
+    <button type="submit" [disabled]="!form.valid" (click)="search()"><i class="fa fa-search"></i></button>
+</form>
+
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="!(users$ | async) && (loggedUser$ | async) && (loggedUser$ | async).email != 'admin@mail.hr'" > 
+    <table class="table lessons-list card card-strong search_card">
+        <tbody>
+        <tr>
+            <td class="lesson-title mess">
+                <b>{{(loggedUser$ | async).firstName}} {{(loggedUser$ | async).lastName}}</b>
+            </td>
+            <td class="lesson-title mess"> <b>Email address</b><br>{{(loggedUser$ | async).email}} </td>
+            <td class="lesson-title mess" *ngIf="(loggedUser$ | async).profileLink"> <b>Profile on Secursy</b><br><a [href]="profileLink1"  target="_blank">Click here</a></td>
+            <td class="lesson-title mess"> <b>Money</b><br>{{(loggedUser$ | async).money}}$ </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(users$ | async)" >
+        <table class="table lessons-list card card-strong search_card">
+            <tbody>
+            <tr *ngFor="let p of users$ | async" >
+                <td class="lesson-title mess">
+                    <b>{{p.firstName}} {{p.lastName}}</b>
+                </td>
+                <td class="lesson-title mess"> <b>Email address</b><br>{{p.email}} </td>
+                <td class="lesson-title mess" *ngIf="p.profileLink"> <b>Profile on Secursy</b><br><a [href]="unsanitize(p.profileLink)"  target="_blank">Click here</a></td>
+                <td class="lesson-title mess" *ngIf="(loggedUser$ | async).email == 'admin@mail.hr'"> <b>Money</b><br>{{p.money}}$ </td>
+            </tr>
+            </tbody>
+        </table>
+</div>

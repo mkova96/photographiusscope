@@ -1,0 +1,48 @@
+<div>
+    <h1 class="naslov">Messages</h1>
+    <button routerLink="/messages/add/SESSIONID/{{session}}" class="btn btn-dark btn-center">
+        New message
+    </button>
+</div>
+<!--<a [href]="message2"  >Click here</a> -->
+<!--<a [href]="message1"  >Click here</a> -->
+
+<!--<div [innerHtml]="message3"></div>-->
+
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(messages$ | async)" > 
+    <table class="table lessons-list card card-strong ">
+        <tbody>
+        <tr *ngFor="let p of messages$ | async;" >
+            <td class="lesson-title messy">
+                 <div>
+                    <a id="myBtn" (click)="openModal(p.sender.id)"><u><b>Sender</b><br>{{p.sender.firstName}} {{p.sender.lastName}}</u></a>
+                    <div id="myModal{{p.sender.id}}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" (click)="closeModal(p.sender.id)">&times;</span>
+                            <h1 style="text-align: center;">{{p.sender.firstName}} {{p.sender.lastName}}</h1>
+                            <h3 style="text-align: center;">Email: {{p.sender.email}}</h3>
+                            <h3 style="text-align: center;">Profile link on Secursy: <a [href]="desanitizeURL(p.sender.profileLink)" target="_blank"><u>Click here</u></a></h3>
+                        </div> 
+                    </div>
+                </div>
+            </td>
+            <td class="lesson-title messy">
+                 <div>
+                    <a id="myBtn" (click)="openModal(p.receiver.id)"><u><b>Receiver</b><br>{{p.receiver.firstName}} {{p.receiver.lastName}}</u></a>
+                    <div id="myModal{{p.receiver.id}}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" (click)="closeModal(p.receiver.id)">&times;</span>
+                            <h1 style="text-align: center;">{{p.receiver.firstName}} {{p.receiver.lastName}}</h1>
+                            <h3 style="text-align: center;">Email: {{p.receiver.email}}</h3>
+                            <h3 style="text-align: center;">Profile link on Secursy: <a [href]="desanitizeURL(p.receiver.profileLink)"  target="_blank"><u>Click here</u></a></h3>
+                        </div>
+    
+                    </div>
+                </div>
+            </td>
+            <td class="msg_date"> <b>Date</b><br>{{p.date}} </td>
+            <td class="message-content" [innerHtml]="p.content"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>

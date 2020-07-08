@@ -1,0 +1,30 @@
+
+
+.l-header {
+    display: block;
+}
+
+main {
+    padding-top: 50px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.course-header {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.course-header h3 {
+    text-align: center;
+}
+
+td.title {
+    display: block;
+}
+
+.card {
+    width:600px;
+    margin-left: 150px;
+}

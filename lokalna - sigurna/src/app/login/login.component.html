@@ -1,0 +1,45 @@
+<head>    <script src="https://www.google.com/recaptcha/api.js?onload=grecaptchaCallback&amp;render=explicit"></script>
+</head> 
+<h1 class="naslov">Login</h1>
+<div class="error-messages">
+    <ng-container *ngFor="let error of error_messages.email">
+      <label class="text-danger errors" *ngIf="form.get('email').hasError(error.type) && (form.get('email').dirty || form.get('email').touched)">
+          {{error.message }}
+      </label>
+    </ng-container>
+</div>
+<div class="error-messages">
+    <ng-container *ngFor="let error of error_messages.password">
+      <label class="text-danger errors" *ngIf="form.get('password').hasError(error.type) && (form.get('password').dirty || form.get('password').touched)">
+          {{error.message }}
+      </label>
+    </ng-container>
+</div>
+
+<form autocomplete="off" novalidate [formGroup]="form" class="form-center">
+    <fieldset>
+      <div>
+          <re-captcha (resolved)="resolved($event)" 
+                      formControlName="recaptchaReactive" 
+                      siteKey="6LfePfAUAAAAAGa6FIBtAHMku9gAzvgwZsYD1cXu">  
+          </re-captcha>
+      </div>
+      <div class="form-group">
+          <label>Email:</label>
+          <input name="email" formControlName="email" class="form-control">
+      </div>
+
+      <div class="form-group">
+          <label>Password:</label>
+          <input name="password" class="form-control" formControlName="password" type="password" class="form-control">
+      </div>
+
+  </fieldset>
+
+
+  <div class="form-buttons">
+    <button class="btn btn-dark" [disabled]="!form.valid" (click)="login()">Login</button>
+  </div>
+
+
+</form>

@@ -1,0 +1,21 @@
+<div>
+    <h1 class="naslov">Transactions</h1>
+    <button routerLink="/transaction" class="btn btn-dark btn-center" *rbacAllow="['USER']">
+        New transaction
+    </button>
+</div>
+
+<h2 *ngIf="!(transactions$ | async)">You currently don't own any transactions..</h2>
+
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(transactions$ | async)">
+        <table class="table lessons-list card card-strong">
+            <tbody>
+                <tr *ngFor="let transaction of transactions$ | async" >
+                    <td class="lesson-title"> <b>Amount</b><br>{{transaction.amount}}$ </td>
+                    <td class="lesson-title"> <b>Sender</b><br>{{transaction.sender.email}} </td>
+                    <td class="lesson-title"> <b>Receiver</b><br>{{transaction.receiver.email}} </td>
+                    <td class="lesson-description"> <b>Date</b><br>{{transaction.date}} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

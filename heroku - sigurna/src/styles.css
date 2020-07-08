@@ -1,0 +1,213 @@
+/* You can add global styles to this file, and also import other style files */
+
+main {
+    width:100%;
+    min-height: 717px;
+}
+
+section {
+    padding: 80px 0;
+    background-color:rgb(240, 234, 240);
+}
+
+.row {
+    max-width: 1140px;
+    /*margin: 0 auto 0 auto;*/ /*ISTOOOOO*/
+    margin: 0 auto; /*CENTRIRANJE ELEMENTA*/
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: #fff;
+    color: #555;
+    font-size: 20px;
+    font-weight: 300;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+}
+
+/*************HEADINGS************/
+
+h1, h2, h3,label {
+    font-weight: 300;
+    text-transform: uppercase; /*UPPERCASE*/
+}
+
+h1 {
+    margin: 0;
+    text-align: center;
+    margin-bottom: 20px;
+    color:  #555;
+    font-size: 240%;
+    word-spacing: 4px;
+    letter-spacing: 1px;
+}
+
+h2 {
+    font-size: 160%;
+    color:  #555;
+    word-spacing: 2px;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    margin-top: 20px;
+}
+
+h3{
+    font-size: 110%;
+    color:  #555;
+    margin-bottom: 23px;
+    font-weight: 400;
+}
+
+label {
+    font-size: 110%;
+    color:  #555;
+    font-weight: 400;
+}
+
+.form-field {
+    padding: 5px;
+}
+
+h1:after ,h2:after { /*NARANCASTA CRTA*/
+    display: block;
+    height: 2px;
+    background-color: rgb(26, 25, 25);
+    content: " ";
+    width: 100px;
+    margin: 0 auto;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.naslov {
+    margin-top: 20px;
+}
+td.title {
+    display: block;
+    margin-right: 40px;
+}
+
+.card {
+    width:750px;
+    margin-left: 475px;
+}
+
+td.photo {
+    margin-right: 45px;
+}
+
+.search {
+    width:470px;
+}
+
+div.ipsearch {
+    position: relative;
+    left:550px;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.src-btn{
+    position: absolute;
+    top: 48px;
+    left: 538px;
+}
+
+.ipresponse {
+    right:400px;
+    width: 500px;
+}
+
+.btn-center {
+    margin-left: 765px;
+    margin-bottom: 20px;
+}
+
+.form-center {
+    margin-left: 700px;
+}
+
+.form-buttons {
+    margin-left:115px;
+    margin-top: 10px;
+}
+
+footer {
+    background-color: #333;
+    padding: 20px;
+    font-size: 80%;
+    height: -webkit-fill-available;
+    max-height: 162px;
+}
+
+footer p {
+    color: #888;
+    margin-top: 5px;
+}
+
+.top-menu {
+    background-color: rgb(31, 21, 21);
+}
+
+textarea{
+    height: 150px;
+    width: 250px;
+}
+
+.form-control {
+    width: 30%;
+}
+
+.btn-warning {
+    margin-right: 10px;
+}
+
+.message-content {
+    width: 300px;
+    margin-right: 40px;
+    display: block;
+}
+
+.msg-card {
+    width: 1000px;
+    margin-left: 50px;
+}
+
+.mess {
+    min-width: 80px;
+}
+
+.alert {
+    margin:auto;
+    width: 50%;
+}
+
+.fa {
+    width: 40px;
+}
+
+.user_search {
+    display:flex;
+}
+
+.search_card {
+    margin-top: 20px;
+}
+
+input.ng-dirty.ng-invalid {
+    border: 3px solid #a94442;
+}
+
+.errors {
+    margin-left: 550px;
+}

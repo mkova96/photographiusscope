@@ -1,0 +1,37 @@
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success</strong> {{successMessage}} 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error</strong> {{errorMessage}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<!---********************************************************************************************---> 
+<h1 class="naslov">New message</h1>
+
+<form autocomplete="off" novalidate [formGroup]="form" class="form-center">
+    <fieldset>
+        <div class="form-field" >
+            <label>Receiver:</label>
+            <select class="form-control"id="receiverEmail" name="receiverEmail" formControlName="receiverEmail" required >
+                <option *ngFor="let user of users$ | async" [ngValue]="user.email">
+                    {{ user.firstName }} {{user.lastName}}
+                </option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label>Content:</label>
+            <textarea type="text" class="form-control" name="content" formControlName="content" required></textarea>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button class="btn btn-dark" [disabled]="!form.valid" (click)="sendMessage()"> Send</button>
+    </div>
+
+</form>

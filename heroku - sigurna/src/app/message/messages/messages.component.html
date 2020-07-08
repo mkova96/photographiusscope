@@ -1,0 +1,18 @@
+<div>
+    <h1 class="naslov">Messages</h1>
+    <button routerLink="/messages/add" class="btn btn-dark btn-center">
+        New message
+    </button>
+</div>
+
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(messages$ | async)" > 
+    <table class="table lessons-list card card-strong ">
+        <tbody>
+        <tr *ngFor="let p of messages$ | async;" >
+            <td class="lesson-title mess"> <b>Sender</b><br>{{p.sender.firstName}} {{p.sender.lastName}} </td>
+            <td class="lesson-title mess"> <b>Receiver</b><br>{{p.receiver.firstName}} {{p.receiver.lastName}} </td>
+            <td class="mess"> <b>Date</b><br>{{p.date}} </td>
+            <td class="message-content" [innerHtml]="p.content"></td>        </tr>
+        </tbody>
+    </table>
+</div>

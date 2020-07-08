@@ -1,0 +1,38 @@
+
+<h1 class="naslov">New transaction</h1>
+
+<ng-container *ngFor="let error of error_messages.amount" >
+    <label class="text-danger errors" *ngIf="form.get('amount').hasError(error.type) && (form.get('amount').dirty || form.get('amount').touched)">
+        {{error.message }}
+    </label>
+  </ng-container>
+  <ng-container *ngFor="let error of error_messages.password" >
+    <label class="text-danger errors" *ngIf="form.get('password').hasError(error.type) && (form.get('password').dirty || form.get('password').touched)">
+        {{error.message }}
+    </label>
+  </ng-container>
+
+<form autocomplete="off" novalidate [formGroup]="form" class="form-center">
+    <fieldset>
+        <div class="form-field">
+            <label>Amount:</label>
+            <input class="form-control" type="number" name="amount" formControlName="amount" required>
+        </div>
+        <div class="form-field" >
+            <label>Receiver:</label>
+            <select id="receiverEmail" name="receiverEmail"  class="form-control"formControlName="receiverEmail" required>
+                <option *ngFor="let user of users$ | async" [ngValue]="user.email">
+                    {{ user.firstName }}  {{ user.lastName }}
+                </option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label>Password:</label>
+            <input name="password" class="form-control" formControlName="password" type="password" required>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button class="btn btn-dark" [disabled]="!form.valid" (click)="sendMoney()">Save</button>
+    </div>
+</form>

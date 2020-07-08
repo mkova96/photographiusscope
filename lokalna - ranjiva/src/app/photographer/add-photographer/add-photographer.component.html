@@ -1,0 +1,36 @@
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success</strong> {{successMessage}} 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error</strong> {{errorMessage}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<!---********************************************************************************************---> 
+<h1 class="naslov">new Photographer</h1>
+
+<form autocomplete="off" novalidate [formGroup]="form" class="form-center">
+    <fieldset>
+        <div class="form-group">
+            <label>First Name:</label>
+            <input class="form-control" formControlName="firstName" type="text" required />
+        </div>
+        <div class="form-field">
+            <label>Last Name:</label>
+            <input class="form-control" formControlName="lastName" type="text" required/>
+        </div>
+        <div class="form-field">
+            <label>Age</label>
+            <input type="number" name="age" formControlName="age" class="form-control" required>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button class="btn btn-dark" [disabled]="!form.valid" (click)="createPhotographer()">Save</button>
+    </div>
+</form>

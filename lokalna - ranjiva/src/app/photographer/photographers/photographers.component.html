@@ -1,0 +1,26 @@
+<div class="lessons-list-container v-h-center-block-parent" *ngIf="(photographers$ | async)" >
+
+    <div>
+        <h1 class="naslov">Photographers</h1>
+        <button routerLink="/photographers/add" class="btn btn-dark btn-center">
+            New photographer
+        </button>
+    </div>
+    <table class="table lessons-list card card-strong">
+        <tbody>
+        <tr *ngFor="let p of photographers$ | async" >
+            <td class="lesson-title"> <b>{{p.firstName}} {{p.lastName}}</b> <br> {{p.age}} years old </td>
+            <td class="lesson-title">
+                <button routerLink="/photographers/{{p.id}}" class="btn btn-warning">
+                    Edit 
+                </button>
+                <button class="btn btn-danger" (click)="deletePhotographer(p.id)">
+                    Delete 
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    
+    
+    </div>
